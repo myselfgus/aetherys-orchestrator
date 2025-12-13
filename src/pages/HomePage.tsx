@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ChatArea } from '@/components/chat/ChatArea';
 import { chatService } from '@/lib/chat';
@@ -12,6 +12,8 @@ export function HomePage() {
   const [controller, setController] = useState<AbortController | null>(null);
   const activeSessionId = useAppStore(s => s.activeSessionId);
   const setActiveSessionId = useAppStore(s => s.setActiveSessionId);
+  const fetchSessions = useAppStore(s => s.fetchSessions);
+  const createNewSession = useAppStore(s => s.createNewSession);
   const loadSession = useCallback(async (sessionId: string) => {
     chatService.switchSession(sessionId);
     const res = await chatService.getMessages();
@@ -23,23 +25,26 @@ export function HomePage() {
     }
   }, []);
   useEffect(() => {
-    const initializeSession = async () => {
-      if (activeSessionId) {
+    const initialize = async () => {
+      await fetchSessions();
+      const sessions = useAppStore.getState().sessions;
+      if (activeSessionId && sessions.some(s => s.id === activeSessionId)) {
         await loadSession(activeSessionId);
+      } else if (sessions.length > 0) {
+        setActiveSessionId(sessions[0].id);
       } else {
-        const res = await chatService.createSession();
-        if (res.success && res.data) {
-          const newSessionId = res.data.sessionId;
-          setActiveSessionId(newSessionId);
-          chatService.switchSession(newSessionId);
-          setMessages([]);
-        } else {
-          toast.error("Failed to create a new session.");
-        }
+        await createNewSession();
       }
     };
-    initializeSession();
-  }, [activeSessionId, setActiveSessionId, loadSession]);
+    initialize();
+  }, []); // Run only once on mount
+  useEffect(() => {
+    if (activeSessionId) {
+      loadSession(activeSessionId);
+    } else {
+      setMessages([]);
+    }
+  }, [activeSessionId, loadSession]);
   const handleSendMessage = async (message: string) => {
     setIsProcessing(true);
     setStreamingMessage('');
@@ -52,20 +57,14 @@ export function HomePage() {
       timestamp: Date.now(),
     };
     setMessages(prev => [...prev, userMessage]);
-    // Create a new session if it's the first message
-    if (messages.length === 0) {
-        const res = await chatService.createSession(undefined, chatService.getSessionId(), message);
-        if (res.success && res.data) {
-            setActiveSessionId(res.data.sessionId);
-        }
+    if (messages.length === 0 && activeSessionId) {
+      const title = message.substring(0, 40) + (message.length > 40 ? '...' : '');
+      await chatService.updateSessionTitle(activeSessionId, title);
+      await fetchSessions();
     }
     try {
       await chatService.sendMessage(message, undefined, (chunk) => {
-        if (newAbortController.signal.aborted) {
-          // This part is tricky as the fetch promise won't reject on abort.
-          // We rely on the stop handler to clean up state.
-          return;
-        }
+        if (newAbortController.signal.aborted) return;
         setStreamingMessage(prev => prev + chunk);
       });
     } catch (error) {
@@ -87,7 +86,6 @@ export function HomePage() {
       controller.abort();
       setController(null);
       setIsProcessing(false);
-      // Persist the partially streamed message
       const finalMessages = [...messages];
       if (streamingMessage) {
         finalMessages.push({
@@ -102,6 +100,9 @@ export function HomePage() {
       toast.info("Generation stopped.");
     }
   };
+  const lastAssistantMessage = useMemo(() => {
+    return [...messages].reverse().find(m => m.role === 'assistant')?.content;
+  }, [messages]);
   return (
     <>
       <MainLayout>
@@ -111,9 +112,10 @@ export function HomePage() {
           isProcessing={isProcessing}
           onSendMessage={handleSendMessage}
           onStop={handleStop}
+          lastAssistantMessage={lastAssistantMessage}
         />
       </MainLayout>
-      <Toaster theme="dark" richColors closeButton />
+      <Toaster theme="dark" richColors closeButton position="top-right" />
     </>
   );
 }
