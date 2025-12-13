@@ -152,6 +152,7 @@ export default {
         'refined': '0 1px 2px 0 rgb(0 0 0 / 0.08)',
         'refined-md': '0 2px 8px rgb(0 0 0 / 0.12)',
         'refined-lg': '0 4px 16px rgb(0 0 0 / 0.15)',
+        'refined-xl': '0 8px 32px rgb(0 0 0 / 0.15)',
         'refined-inset': 'inset 0 1px 2px 0 rgb(0 0 0 / 0.08)',
         'liquid-glow': '0 8px 32px rgba(0, 0, 0, 0.05)',
         'inset-glow': 'inset 0 0 20px rgba(255, 255, 255, 0.5)',
