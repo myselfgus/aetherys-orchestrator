@@ -34,7 +34,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     return (
       <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
         <div className="flex-1 min-h-0 relative">
-          <main className="h-full flex flex-col bg-background/80 backdrop-blur-3xl border-b border-glass-border-soft">
+          <main className="h-full flex flex-col bg-white/95 backdrop-blur-3xl border-b border-white/20">
             {children}
           </main>
         </div>
@@ -48,7 +48,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
   return (
     <SidebarProvider>
-      <div className="h-screen w-screen bg-gradient-to-br from-background to-white/5 text-foreground overflow-hidden flex flex-col">
+      <div className="h-screen w-screen bg-gradient-to-br from-white/95 to-white/98 text-foreground overflow-hidden flex flex-col">
         <div className="flex-1 min-h-0">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <AnimatePresence initial={false}>
@@ -64,11 +64,11 @@ export function MainLayout({ children }: MainLayoutProps) {
                     defaultSize={18}
                     minSize={15}
                     maxSize={25}
-                    className="min-w-[260px] refined-glass bg-white/4"
+                    className="min-w-[260px] refined-glass bg-white/8 border-white/20 shadow-refined"
                   >
                     <AppSidebar />
                   </ResizablePanel>
-                  <ResizableHandle withHandle className="bg-transparent border-x border-border w-2 hover:shadow-ultra-neumorphic-out transition-all duration-300" />
+                  <ResizableHandle withHandle className="bg-transparent border-x border-border w-2 hover:shadow-refined-lg transition-all duration-300" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -86,12 +86,12 @@ export function MainLayout({ children }: MainLayoutProps) {
                   exit={{ width: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <ResizableHandle withHandle className="bg-transparent border-x border-border w-2 hover:shadow-ultra-neumorphic-out transition-all duration-300" />
+                  <ResizableHandle withHandle className="bg-transparent border-x border-border w-2 hover:shadow-refined-lg transition-all duration-300" />
                   <ResizablePanel
                     defaultSize={30}
                     minSize={25}
                     maxSize={50}
-                    className="min-w-[400px] refined-glass bg-white/4"
+                    className="min-w-[400px] refined-glass bg-white/8 border-white/20 shadow-refined"
                   >
                     <ArtifactPanel />
                   </ResizablePanel>
@@ -100,7 +100,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             </AnimatePresence>
           </ResizablePanelGroup>
         </div>
-        <footer className="text-center py-1 text-xs text-foreground/95 porcelain-glass-panel">
+        <footer className="text-center py-1 text-xs text-foreground/95 porcelain-glass-panel shadow-refined">
           Built with ❤️ at Cloudflare.
         </footer>
       </div>

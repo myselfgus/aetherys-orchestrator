@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { Message, ToolCall } from 'worker/types';
 import { cn } from '@/lib/utils';
-import { Bot, User, Code, Eye, Wrench, GalleryHorizontal } from 'lucide-react';
+import { Code, Eye, Wrench, GalleryHorizontal } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -56,12 +56,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   return (
     <div className={cn('flex items-start gap-4 animate-fade-in', isUser ? 'justify-end' : 'justify-start')}>
-      <div className={cn('flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center minimal-neumorphic', isUser ? 'bg-indigo-500' : 'bg-cyan-500')}>
-        {isUser ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-white" />}
-      </div>
       <div className={cn(
-        'w-full max-w-3xl rounded-3xl p-6 space-y-4 transition-all duration-500 ease-out refined-glass',
-        isUser ? 'bg-gradient-to-r from-accent/5 hover:animate-liquid-scale' : 'porcelain-glass-panel'
+        'w-full max-w-3xl space-y-4 transition-all duration-500 ease-out',
+        isUser
+          ? 'ml-auto rounded-2xl p-6 bg-gradient-to-r from-indigo-500/10 via-white/5 to-indigo-500/5 transform -skew-x-3 hover:-skew-x-1 origin-center text-indigo-900/95 font-bold dark:text-indigo-100'
+          : 'porcelain-glass-panel rounded-3xl p-6'
       )}>
         <div className="prose prose-sm md:prose-base max-w-none prose-pre:p-0 prose-pre:rounded-md prose-table:w-full prose-table:overflow-x-auto dark:prose-invert prose-pre:bg-transparent font-semibold text-foreground/95">
           <ReactMarkdown
@@ -95,12 +94,12 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         </div>
         {artifacts.length > 0 && (
           <div className="space-y-2 pt-2 border-t border-glass-border-soft">
-            <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-2"><Code className="w-4 h-4"/> Generated Artifacts</h4>
+            <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-2"><Code strokeWidth={1.5} className="w-4 h-4"/> Generated Artifacts</h4>
             {artifacts.map((artifact, index) => (
-              <div key={index} className="porcelain-glass-panel p-3 rounded-md flex justify-between items-center hover:shadow-ultra-neumorphic-out hover:animate-liquid-scale transition-transform duration-300">
+              <div key={index} className="porcelain-glass-panel p-3 rounded-md flex justify-between items-center hover:shadow-refined-md hover:animate-liquid-scale transition-transform duration-300">
                 <span className="text-sm font-mono text-muted-foreground">artifact.{artifact.language}</span>
                 <Button size="sm" variant="ghost" onClick={() => handleViewArtifact(artifact)} className="text-primary/80 hover:bg-primary/10 hover:text-primary minimal-neumorphic">
-                  {artifact.language === 'canvas' ? <GalleryHorizontal className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />} View
+                  {artifact.language === 'canvas' ? <GalleryHorizontal strokeWidth={1.5} className="w-4 h-4 mr-2" /> : <Eye strokeWidth={1.5} className="w-4 h-4 mr-2" />} View
                 </Button>
               </div>
             ))}
@@ -111,7 +110,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1" className="border-glass-border-soft">
                 <AccordionTrigger className="text-sm font-semibold text-muted-foreground hover:no-underline">
-                  <div className="flex items-center gap-2"><Wrench className="w-4 h-4"/> Tool Calls</div>
+                  <div className="flex items-center gap-2"><Wrench strokeWidth={1.5} className="w-4 h-4"/> Tool Calls</div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-2 p-2 porcelain-glass-panel rounded-md">

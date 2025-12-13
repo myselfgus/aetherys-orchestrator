@@ -6,6 +6,8 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
+          'Aptos Light',
+          'Avenir Next Pro Light',
   				'Inter',
   				'-apple-system',
   				'BlinkMacSystemFont',
@@ -19,6 +21,7 @@ export default {
 				'sans-serif'
 			],
   			mono: [
+          'JetBrains Mono Light',
   				'JetBrains Mono',
   				'Fira Code',
   				'Consolas',
@@ -146,8 +149,10 @@ export default {
         'glass-border-bold': 'hsl(0 0% 100% / 0.3)',
   		},
   		boxShadow: {
-        'ultra-neumorphic-out': '2px 2px 4px rgba(0,0,0,0.05), -2px -2px 4px rgba(255,255,255,0.8)',
-        'ultra-neumorphic-in': 'inset 2px 2px 4px rgba(0,0,0,0.05), inset -2px -2px 4px rgba(255,255,255,0.8)',
+        'refined': '0 1px 2px 0 rgb(0 0 0 / 0.08)',
+        'refined-md': '0 2px 8px rgb(0 0 0 / 0.12)',
+        'refined-lg': '0 4px 16px rgb(0 0 0 / 0.15)',
+        'refined-inset': 'inset 0 1px 2px 0 rgb(0 0 0 / 0.08)',
         'liquid-glow': '0 8px 32px rgba(0, 0, 0, 0.05)',
         'inset-glow': 'inset 0 0 20px rgba(255, 255, 255, 0.5)',
         'porcelain-glow': '0 0 20px hsl(0 0% 100% / 0.5)',
@@ -193,10 +198,10 @@ export default {
   			},
         'porcelain-glow-pulse': {
           '0%, 100%': {
-            boxShadow: '0 0 15px hsl(0 0% 100% / 0.3)'
+            boxShadow: '0 0 15px hsl(0 0% 100% / 0.3), 0 1px 2px 0 rgb(0 0 0 / 0.08)'
           },
           '50%': {
-            boxShadow: '0 0 30px hsl(0 0% 100% / 0.6)'
+            boxShadow: '0 0 30px hsl(0 0% 100% / 0.6), 0 2px 8px rgb(0 0 0 / 0.12)'
           }
         },
   			float: {

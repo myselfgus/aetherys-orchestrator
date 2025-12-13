@@ -142,12 +142,12 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     };
   }, [onSendMessage, isRecording]);
   return (
-    <div className="refined-glass rounded-3xl p-2 flex items-end gap-2 focus-within:shadow-ultra-neumorphic-out focus-within:ring-2 ring-white/20">
+    <div className="refined-glass rounded-3xl p-2 flex items-end gap-2 border-white/20 shadow-refined focus-within:shadow-refined-lg focus-within:ring-2 ring-white/20">
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground minimal-neumorphic">
-              <Paperclip className="w-5 h-5" />
+              <Paperclip strokeWidth={1.5} className="w-5 h-5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Attach files</TooltipContent>
@@ -159,13 +159,13 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Ask Aetherys anything..."
-        className="flex-1 bg-white/5 shadow-inset-glow text-foreground placeholder:text-muted-foreground resize-none border-0 focus:ring-0 p-2 text-base rounded-lg transition-transform duration-300 focus:animate-liquid-scale"
+        className="flex-1 bg-white/8 border-white/20 shadow-refined-inset text-foreground placeholder:text-muted-foreground resize-none border-0 focus:ring-0 p-2 text-base rounded-lg transition-transform duration-300 focus:animate-liquid-scale"
         maxRows={8}
         disabled={isProcessing}
       />
       {isProcessing ? (
         <Button onClick={onStop} size="icon" className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white minimal-neumorphic">
-          <Square className="w-5 h-5" />
+          <Square strokeWidth={1.5} className="w-5 h-5" />
         </Button>
       ) : (
         <div className="flex items-center gap-1">
@@ -173,7 +173,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button onClick={handleTTS} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground minimal-neumorphic animate-liquid-scale [animation-delay:1s]">
-                  <Volume2 className="w-5 h-5" />
+                  <Volume2 strokeWidth={1.5} className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Read last message</TooltipContent>
@@ -184,11 +184,11 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
                   <AnimatePresence mode="wait">
                     {isRecording ? (
                       <motion.div key="recording" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                        <MicOff className="w-5 h-5 text-red-500 animate-porcelain-glow-pulse" />
+                        <MicOff strokeWidth={1.5} className="w-5 h-5 text-red-500 animate-porcelain-glow-pulse" />
                       </motion.div>
                     ) : (
                       <motion.div key="idle" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                        <Mic className="w-5 h-5" />
+                        <Mic strokeWidth={1.5} className="w-5 h-5" />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -198,7 +198,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
             </Tooltip>
           </TooltipProvider>
           <Button onClick={handleSend} size="icon" className="flex-shrink-0 bg-cyan-500 hover:bg-cyan-600 text-white minimal-neumorphic hover:animate-liquid-scale active:animate-porcelain-glow-pulse transition-transform" disabled={!input.trim()}>
-            <Send className="w-5 h-5" />
+            <Send strokeWidth={1.5} className="w-5 h-5" />
           </Button>
         </div>
       )}
