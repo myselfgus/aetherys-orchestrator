@@ -60,10 +60,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {isUser ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-white" />}
       </div>
       <div className={cn(
-        'w-full max-w-3xl rounded-2xl p-4 space-y-4',
-        isUser ? 'bg-primary/5 dark:bg-indigo-600/20 shadow-neumorphic-out-sm' : 'porcelain-panel'
+        'w-full max-w-3xl rounded-3xl p-6 space-y-4 transition-all duration-400 ease-out',
+        isUser ? 'glass-neumorphic bg-gradient-to-r from-primary/5 to-transparent' : 'porcelain-panel inner-glow'
       )}>
-        <div className="prose prose-sm md:prose-base max-w-none prose-pre:p-0 prose-pre:rounded-md prose-table:w-full prose-table:overflow-x-auto dark:prose-invert prose-pre:bg-transparent">
+        <div className="prose prose-sm md:prose-base max-w-none prose-pre:p-0 prose-pre:rounded-md prose-table:w-full prose-table:overflow-x-auto dark:prose-invert prose-pre:bg-transparent font-semibold text-foreground">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
@@ -97,9 +97,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           <div className="space-y-2 pt-2 border-t border-border">
             <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-2"><Code className="w-4 h-4"/> Generated Artifacts</h4>
             {artifacts.map((artifact, index) => (
-              <div key={index} className="bg-muted/50 p-3 rounded-md flex justify-between items-center">
+              <div key={index} className="porcelain-panel p-3 rounded-md flex justify-between items-center hover:shadow-neumorphic-strong-in hover:scale-[1.02] transition-transform duration-300">
                 <span className="text-sm font-mono text-muted-foreground">artifact.{artifact.language}</span>
-                <Button size="sm" variant="ghost" onClick={() => handleViewArtifact(artifact)} className="text-primary/80 hover:bg-primary/10 hover:text-primary">
+                <Button size="sm" variant="ghost" onClick={() => handleViewArtifact(artifact)} className="text-primary/80 hover:bg-primary/10 hover:text-primary neumorphic-btn">
                   {artifact.language === 'canvas' ? <GalleryHorizontal className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />} View
                 </Button>
               </div>
@@ -114,7 +114,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                   <div className="flex items-center gap-2"><Wrench className="w-4 h-4"/> Tool Calls</div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="space-y-2 p-2 bg-muted/50 rounded-md">
+                  <div className="space-y-2 p-2 porcelain-panel rounded-md">
                     {message.toolCalls.map((toolCall: ToolCall) => (
                       <div key={toolCall.id} className="font-mono text-xs text-muted-foreground">
                         <p><strong>{toolCall.name}</strong></p>

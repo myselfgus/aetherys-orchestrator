@@ -142,10 +142,11 @@ export default {
   			},
         porcelain: {
           DEFAULT: 'hsl(40, 50%, 98%)',
-          foreground: 'hsl(224, 10%, 20%)',
+          foreground: 'hsl(224, 10%, 15%)',
         },
         'glass-bg': 'hsl(0 0% 100% / 0.05)',
-        'border-glass': 'hsl(0 0% 100% / 0.2)',
+        'glass-border': 'hsl(0 0% 100% / 0.2)',
+        'glass-border-bold': 'hsl(0 0% 100% / 0.3)',
   		},
   		boxShadow: {
   			soft: '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
@@ -157,7 +158,10 @@ export default {
         'neumorphic-in': 'inset 6px 6px 12px hsl(var(--background-shadow-dark)), inset -6px -6px 12px hsl(var(--background-shadow-light))',
         'neumorphic-out-sm': '3px 3px 6px hsl(var(--background-shadow-dark)), -3px -3px 6px hsl(var(--background-shadow-light))',
         'neumorphic-in-sm': 'inset 3px 3px 6px hsl(var(--background-shadow-dark)), inset -3px -3px 6px hsl(var(--background-shadow-light))',
+        'neumorphic-strong-out': '5px 5px 10px hsl(var(--background-shadow-dark)), -5px -5px 10px hsl(var(--background-shadow-light))',
+        'neumorphic-strong-in': 'inset 5px 5px 10px hsl(var(--background-shadow-dark)), inset -5px -5px 10px hsl(var(--background-shadow-light))',
         'porcelain-glow': '0 0 20px hsl(0 0% 100% / 0.5)',
+        'liquid-reflection': '0 4px 30px rgba(0, 0, 0, 0.1)',
   		},
   		keyframes: {
   			'fade-in': {
@@ -222,6 +226,10 @@ export default {
   					transform: 'translateY(-10px)'
   				}
   			},
+        'scale-float': {
+          '0%, 100%': { transform: 'translateY(0px) scale(1)' },
+          '50%': { transform: 'translateY(-5px) scale(1.03)' },
+        },
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -245,8 +253,9 @@ export default {
   			'scale-in': 'scale-in 0.3s ease-out',
   			shimmer: 'shimmer 2s infinite',
   			glow: 'glow 2s ease-in-out infinite',
-        'porcelain-pulse': 'porcelain-pulse 2.5s ease-in-out infinite',
+        'porcelain-pulse': 'porcelain-pulse 2s ease-in-out infinite alternate',
   			float: 'float 3s ease-in-out infinite',
+        'scale-float': 'scale-float 4s ease-in-out infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		},
