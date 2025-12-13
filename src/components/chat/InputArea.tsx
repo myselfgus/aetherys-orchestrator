@@ -5,31 +5,50 @@ import { Paperclip, Mic, Send, Square, MicOff, Volume2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-// Augment the global Window interface to include SpeechRecognition APIs for TypeScript
+// Define interfaces for the Web Speech API to ensure TypeScript compatibility
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  [key: number]: { transcript: string };
+}
+interface SpeechRecognitionResultList {
+  [index: number]: SpeechRecognitionResult;
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+}
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  lang: string;
+  interimResults: boolean;
+  start(): void;
+  stop(): void;
+}
+// Augment the global Window interface
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: {
+      new(): SpeechRecognition;
+    };
+    webkitSpeechRecognition: {
+      new(): SpeechRecognition;
+    };
   }
 }
-export {}; // This makes the file a module
 type InputAreaProps = {
   onSendMessage: (message: string) => void;
   isProcessing: boolean;
   onStop: () => void;
   lastAssistantMessage?: string;
 };
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition: SpeechRecognition | null = null;
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.lang = 'en-US';
-  recognition.interimResults = true;
-}
 export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMessage }: InputAreaProps) {
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const handleSend = () => {
     if (input.trim() && !isProcessing) {
@@ -44,15 +63,15 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     }
   };
   const toggleRecording = () => {
-    if (!recognition) {
+    if (!recognitionRef.current) {
       toast.error("Speech recognition is not supported in your browser.");
       return;
     }
     if (isRecording) {
-      recognition.stop();
+      recognitionRef.current.stop();
     } else {
       try {
-        recognition.start();
+        recognitionRef.current.start();
       } catch (e) {
         toast.error("Speech recognition could not be started. Please check microphone permissions.");
       }
@@ -75,24 +94,34 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     }
   };
   useEffect(() => {
-    if (!recognition) return;
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) {
+      return;
+    }
+    const recognition = new SpeechRecognitionAPI();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognitionRef.current = recognition;
     const onStart = () => setIsRecording(true);
     const onEnd = () => setIsRecording(false);
-    const onError = (event: SpeechRecognitionErrorEvent) => {
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+    const onError = (event: Event) => {
+      const errorEvent = event as SpeechRecognitionErrorEvent;
+      if (errorEvent.error === 'not-allowed' || errorEvent.error === 'service-not-allowed') {
         toast.error("Microphone access denied. Please enable it in your browser settings.");
       } else {
-        toast.error(`Speech recognition error: ${event.error}`);
+        toast.error(`Speech recognition error: ${errorEvent.error}`);
       }
       setIsRecording(false);
     };
-    const onResult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results)
+    const onResult = (event: Event) => {
+      const speechEvent = event as SpeechRecognitionEvent;
+      const transcript = Array.from(speechEvent.results)
         .map(result => result[0])
         .map(result => result.transcript)
         .join('');
       setInput(transcript);
-      if (event.results[0].isFinal) {
+      if (speechEvent.results[0].isFinal) {
         onSendMessage(transcript);
         setInput('');
       }
@@ -102,13 +131,14 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     recognition.addEventListener('error', onError);
     recognition.addEventListener('result', onResult);
     return () => {
-      recognition?.removeEventListener('start', onStart);
-      recognition?.removeEventListener('end', onEnd);
-      recognition?.removeEventListener('error', onError);
-      recognition?.removeEventListener('result', onResult);
+      recognition.removeEventListener('start', onStart);
+      recognition.removeEventListener('end', onEnd);
+      recognition.removeEventListener('error', onError);
+      recognition.removeEventListener('result', onResult);
       if (isRecording) {
-        recognition?.stop();
+        recognition.stop();
       }
+      window.speechSynthesis?.cancel();
     };
   }, [onSendMessage, isRecording]);
   return (
@@ -120,7 +150,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
               <Paperclip className="w-5 h-5" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Attach files (coming soon)</TooltipContent>
+          <TooltipContent>Attach files</TooltipContent>
         </Tooltip>
       </TooltipProvider>
       <TextareaAutosize
