@@ -105,7 +105,7 @@ export function ArtifactPanel() {
             {artifact.type === 'preview' && <iframe srcDoc={artifact.content} title="Artifact Preview" sandbox="allow-scripts" className="w-full h-full border-0"/>}
           </TabsContent>
           <TabsContent value="canvas" className="flex-1 min-h-0 flex flex-col">
-            <div className="flex-1 min-h-0 relative bg-muted/50 shadow-neumorphic-in hover:shadow-neumorphic-strong-out hover:scale-[1.01] transition-all duration-400">
+            <div className="flex-1 min-h-0 relative bg-muted/50 shadow-neumorphic-in hover:shadow-neumorphic-strong-out hover:scale-[1.01] transition-all duration-[400ms]">
               <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full border-glass-border-bold" />
             </div>
             <div className="p-2 border-t border-glass-border-bold flex items-center gap-2">

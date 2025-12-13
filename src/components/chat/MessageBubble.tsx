@@ -60,7 +60,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {isUser ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-white" />}
       </div>
       <div className={cn(
-        'w-full max-w-3xl rounded-3xl p-6 space-y-4 transition-all duration-400 ease-out',
+        'w-full max-w-3xl rounded-3xl p-6 space-y-4 transition-all duration-[400ms] ease-out',
         isUser ? 'glass-neumorphic bg-gradient-to-r from-primary/5 to-transparent' : 'porcelain-panel inner-glow'
       )}>
         <div className="prose prose-sm md:prose-base max-w-none prose-pre:p-0 prose-pre:rounded-md prose-table:w-full prose-table:overflow-x-auto dark:prose-invert prose-pre:bg-transparent font-semibold text-foreground">
