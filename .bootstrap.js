@@ -77,15 +77,7 @@ function updateWranglerJsonc() {
 }
 
 function runSetupCommands() {
-    const commands = [
-    "bun add react-markdown@^9.0.1",
-    "bun add react-syntax-highlighter@^15.5.0",
-    "bun add remark-gfm@^4.0.0",
-    "bun add rehype-raw@^7.0.0",
-    "bun add react-textarea-autosize@^8.5.3",
-    "bun install react-dropzone",
-    "bun add react-textarea-autosize rehype-raw"
-];
+    const commands = [];
     
     if (commands.length === 0) {
         console.log('⊘ No setup commands to run');
