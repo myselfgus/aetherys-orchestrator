@@ -20,8 +20,8 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 100% / 0.2;
-    --input: 0 0% 100% / 0.2;
+    --border: 210 40% 90%;
+    --input: 210 40% 90%;
     --ring: 204 20% 50%;
     --radius: 0.75rem;
     --chart-1: 12 76% 61%;
@@ -81,16 +81,16 @@
 }
 @layer components {
   .refined-glass {
-    @apply bg-white/8 backdrop-blur-3xl border border-white/20 shadow-refined hover:shadow-refined-lg transition-all duration-500;
+    @apply bg-muted/40 backdrop-blur-3xl border shadow-refined hover:shadow-refined-lg transition-all duration-500;
   }
   .dark .refined-glass {
-    @apply bg-zinc-900/30 border-white/10 shadow-none;
+    @apply bg-zinc-900/20 border-zinc-700/50 shadow-refined-xl;
   }
   .porcelain-glass-panel {
-    @apply bg-gradient-to-br from-white/5 to-white/10 shadow-refined-inset rounded-2xl transition-all duration-500;
+    @apply bg-gradient-to-br from-muted/20 to-card/10 shadow-refined-inset rounded-2xl transition-all duration-500;
   }
   .dark .porcelain-glass-panel {
-    @apply bg-zinc-800/50 border border-white/10 shadow-none;
+    @apply from-zinc-800/40 to-zinc-900/30 border border-zinc-800;
   }
   .minimal-neumorphic {
     @apply shadow-refined hover:shadow-refined-md active:scale-98 transition-all duration-200;
@@ -99,10 +99,16 @@
     @apply shadow-none hover:bg-zinc-800;
   }
   .glass-bg {
-    @apply bg-white/5 backdrop-blur-2xl transition-all duration-500;
+    @apply bg-card/10 border-card backdrop-blur-2xl transition-all duration-500;
   }
   .dark .glass-bg {
-    @apply bg-zinc-800/50 border border-white/10 shadow-none;
+    @apply bg-zinc-800/40 border-zinc-700/50;
+  }
+  .shadow-refined-inset {
+    box-shadow: inset 0 1px 3px 0 rgb(0 0 0 / 0.06);
+  }
+  .dark .shadow-refined-inset {
+    box-shadow: inset 0 1px 3px 0 rgb(255 255 255 / 0.04);
   }
   .inset-glow {
     box-shadow: inset 0 0 10px rgba(255,255,255,0.2);
