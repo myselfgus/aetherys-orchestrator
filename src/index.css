@@ -84,13 +84,13 @@
 }
 @layer components {
   .glass-neumorphic {
-    @apply bg-white/5 backdrop-blur-2xl border border-glass-border-bold shadow-liquid-reflection transition-all duration-[400ms];
+    @apply bg-white/5 backdrop-blur-2xl border border-glass-border-bold shadow-liquid-reflection transition-all duration-500;
   }
   .dark .glass-neumorphic {
     @apply bg-zinc-900/30 border-white/10 shadow-none;
   }
   .porcelain-panel {
-    @apply bg-gradient-to-br from-background to-white/10 shadow-neumorphic-strong-out rounded-xl transition-all duration-[400ms];
+    @apply bg-gradient-to-br from-background to-white/10 shadow-neumorphic-strong-out rounded-xl transition-all duration-500;
   }
   .dark .porcelain-panel {
     @apply bg-zinc-800/50 border border-white/10 shadow-none;
@@ -102,7 +102,7 @@
     @apply shadow-none hover:bg-zinc-800;
   }
   .silky-input {
-    @apply shadow-neumorphic-strong-in bg-white/5 backdrop-blur-2xl transition-all duration-[400ms];
+    @apply shadow-neumorphic-strong-in bg-white/5 backdrop-blur-2xl transition-all duration-500;
   }
   .dark .silky-input {
     @apply bg-zinc-800/50 border border-white/10 shadow-none;
