@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import {
   Dialog,
@@ -16,10 +16,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { MODELS } from '@/lib/chat';
 import { ThemeToggle } from './ThemeToggle';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Terminal } from 'lucide-react';
+import { Terminal, Trash2, PlusCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { ScrollArea } from './ui/scroll-area';
 export function SettingsDialog() {
   const isSettingsOpen = useAppStore(s => s.isSettingsOpen);
   const toggleSettings = useAppStore(s => s.toggleSettings);
+  const mcpServers = useAppStore(s => s.mcpServers);
+  const fetchMCPServers = useAppStore(s => s.fetchMCPServers);
+  const addMCPServer = useAppStore(s => s.addMCPServer);
+  const removeMCPServer = useAppStore(s => s.removeMCPServer);
+  const [newServerName, setNewServerName] = useState('');
+  const [newServerUrl, setNewServerUrl] = useState('');
+  useEffect(() => {
+    if (isSettingsOpen) {
+      fetchMCPServers();
+    }
+  }, [isSettingsOpen, fetchMCPServers]);
+  const handleAddServer = async () => {
+    if (!newServerName.trim() || !newServerUrl.trim()) {
+      toast.error("Server name and URL are required.");
+      return;
+    }
+    const success = await addMCPServer(newServerName, newServerUrl);
+    if (success) {
+      toast.success(`MCP Server "${newServerName}" added.`);
+      setNewServerName('');
+      setNewServerUrl('');
+    } else {
+      toast.error("Failed to add MCP server.");
+    }
+  };
+  const handleRemoveServer = async (name: string) => {
+    const success = await removeMCPServer(name);
+    if (success) {
+      toast.success(`MCP Server "${name}" removed.`);
+    } else {
+      toast.error("Failed to remove MCP server.");
+    }
+  };
   return (
     <Dialog open={isSettingsOpen} onOpenChange={toggleSettings}>
       <DialogContent className="sm:max-w-[625px] refined-glass bg-white/6 text-foreground">
@@ -30,8 +65,9 @@ export function SettingsDialog() {
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="models" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 porcelain-glass-panel">
+          <TabsList className="grid w-full grid-cols-4 porcelain-glass-panel">
             <TabsTrigger value="models">Models</TabsTrigger>
+            <TabsTrigger value="mcp">MCP</TabsTrigger>
             <TabsTrigger value="api">API Config</TabsTrigger>
             <TabsTrigger value="user">Preferences</TabsTrigger>
           </TabsList>
@@ -51,6 +87,36 @@ export function SettingsDialog() {
                 </Select>
                 <p className="text-xs text-muted-foreground">This model will be used for new conversations.</p>
               </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="mcp" className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label className="font-semibold">Add MCP Server</Label>
+              <div className="flex gap-2">
+                <Input placeholder="Server Name" value={newServerName} onChange={e => setNewServerName(e.target.value)} className="glass-bg shadow-inset-glow" />
+                <Input placeholder="SSE URL" value={newServerUrl} onChange={e => setNewServerUrl(e.target.value)} className="glass-bg shadow-inset-glow" />
+                <Button onClick={handleAddServer} size="icon" className="minimal-neumorphic flex-shrink-0"><PlusCircle className="w-4 h-4" /></Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="font-semibold">Connected Servers</Label>
+              <ScrollArea className="h-40 porcelain-glass-panel p-2">
+                {mcpServers.length > 0 ? (
+                  mcpServers.map(server => (
+                    <div key={server.name} className="flex items-center justify-between p-2 rounded-md hover:bg-white/5">
+                      <div>
+                        <p className="font-medium">{server.name}</p>
+                        <p className="text-xs text-muted-foreground">{server.sseUrl}</p>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => handleRemoveServer(server.name)} className="text-red-500/80 hover:text-red-500 minimal-neumorphic">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">No MCP servers configured.</p>
+                )}
+              </ScrollArea>
             </div>
           </TabsContent>
           <TabsContent value="api" className="py-4">

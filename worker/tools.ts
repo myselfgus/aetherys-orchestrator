@@ -1,5 +1,6 @@
 import type { WeatherResult, ErrorResult } from './types';
 import { mcpManager } from './mcp-client';
+import { Env } from './core-utils';
 export type ToolResult = WeatherResult | { content: string } | ErrorResult;
 interface SerpApiResponse {
   knowledge_graph?: { title?: string; description?: string; source?: { link?: string } };
@@ -84,8 +85,8 @@ const customTools = [
     }
   }
 ];
-export async function getToolDefinitions() {
-  const mcpTools = await mcpManager.getToolDefinitions();
+export async function getToolDefinitions(env: Env) {
+  const mcpTools = await mcpManager.getToolDefinitions(env);
   return [...customTools, ...mcpTools];
 }
 const createSearchUrl = (query: string, apiKey: string, numResults: number) => {
@@ -119,11 +120,11 @@ const formatSearchResults = (data: SerpApiResponse, query: string, numResults: n
       }
     });
   }
-  return results.length ? `🔍 Search results for "${query}":\n\n${results.join('\n\n')}`
+  return results.length ? `��� Search results for "${query}":\n\n${results.join('\n\n')}`
     : `No results found for "${query}". Try: https://www.google.com/search?q=${encodeURIComponent(query)}`;
 };
-async function performWebSearch(query: string, numResults = 5): Promise<string> {
-  const apiKey = process.env.SERPAPI_KEY;
+async function performWebSearch(query: string, numResults = 5, env: Env): Promise<string> {
+  const apiKey = env.SERPAPI_KEY;
   if (!apiKey) {
     return `🔍 Web search requires SerpAPI key. Get one at https://serpapi.com/\nFallback: https://www.google.com/search?q=${encodeURIComponent(query)}`;
   }
@@ -157,7 +158,7 @@ async function fetchWebContent(url: string): Promise<string> {
     throw new Error(`Failed to fetch: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
-export async function executeTool(name: string, args: Record<string, unknown>): Promise<ToolResult> {
+export async function executeTool(name: string, args: Record<string, unknown>, env: Env): Promise<ToolResult> {
   try {
     switch (name) {
       case 'get_weather':
@@ -170,7 +171,7 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
       case 'web_search': {
         const { query, url, num_results = 5 } = args;
         if (typeof url === 'string') return { content: await fetchWebContent(url) };
-        if (typeof query === 'string') return { content: await performWebSearch(query, num_results as number) };
+        if (typeof query === 'string') return { content: await performWebSearch(query, num_results as number, env) };
         return { error: 'Either query or url parameter is required' };
       }
       case 'deploy_worker': {
@@ -197,7 +198,7 @@ export async function executeTool(name: string, args: Record<string, unknown>): 
         return { content: `(Simulation) Search results for "${query}":\n1. Document snippet about '${query}'.\n2. Another relevant piece of information.` };
       }
       default: {
-        const content = await mcpManager.executeTool(name, args);
+        const content = await mcpManager.executeTool(name, args, env);
         return { content };
       }
     }

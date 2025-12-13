@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { SessionInfo } from 'worker/types';
+import { SessionInfo, MCPServerConfig } from 'worker/types';
 import { chatService } from './chat';
 export type Artifact = {
   type: 'code' | 'preview' | 'text' | 'canvas' | null;
@@ -13,6 +13,7 @@ interface AppState {
   isSettingsOpen: boolean;
   activeSessionId: string | null;
   sessions: SessionInfo[];
+  mcpServers: MCPServerConfig[];
   artifact: Artifact;
   toggleLeftSidebar: () => void;
   toggleRightSidebar: () => void;
@@ -27,6 +28,9 @@ interface AppState {
   renameSession: (sessionId: string, newTitle: string) => Promise<void>;
   setArtifact: (artifact: Artifact) => void;
   clearArtifact: () => void;
+  fetchMCPServers: () => Promise<void>;
+  addMCPServer: (name: string, sseUrl: string) => Promise<boolean>;
+  removeMCPServer: (name: string) => Promise<boolean>;
 }
 export const useAppStore = create<AppState>((set, get) => ({
   isLeftSidebarOpen: true,
@@ -35,6 +39,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isSettingsOpen: false,
   activeSessionId: null,
   sessions: [],
+  mcpServers: [],
   artifact: { type: null, content: '' },
   toggleLeftSidebar: () => set((state) => ({ isLeftSidebarOpen: !state.isLeftSidebarOpen })),
   toggleRightSidebar: () => set((state) => ({ isRightSidebarOpen: !state.isRightSidebarOpen })),
@@ -81,4 +86,33 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   setArtifact: (artifact) => set({ artifact, isRightSidebarOpen: true }),
   clearArtifact: () => set({ artifact: { type: null, content: '' }, isRightSidebarOpen: false }),
+  fetchMCPServers: async () => {
+    const res = await fetch('/api/mcp/servers');
+    const json = await res.json();
+    if (json.success && json.data) {
+      set({ mcpServers: json.data });
+    }
+  },
+  addMCPServer: async (name, sseUrl) => {
+    const res = await fetch('/api/mcp/servers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, sseUrl }),
+    });
+    if (res.ok) {
+      await get().fetchMCPServers();
+      return true;
+    }
+    return false;
+  },
+  removeMCPServer: async (name) => {
+    const res = await fetch(`/api/mcp/servers/${encodeURIComponent(name)}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      await get().fetchMCPServers();
+      return true;
+    }
+    return false;
+  },
 }));

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Sparkles, PlusCircle, HardDrive, Settings, Server, Wifi, WifiOff } from "lucide-react";
+import { Sparkles, PlusCircle, HardDrive, Settings, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -17,9 +17,12 @@ export function AppSidebar(): JSX.Element {
   const fetchSessions = useAppStore(s => s.fetchSessions);
   const toggleFileManager = useAppStore(s => s.toggleFileManager);
   const toggleSettings = useAppStore(s => s.toggleSettings);
+  const mcpServers = useAppStore(s => s.mcpServers);
+  const fetchMCPServers = useAppStore(s => s.fetchMCPServers);
   useEffect(() => {
     fetchSessions();
-  }, [fetchSessions]);
+    fetchMCPServers();
+  }, [fetchSessions, fetchMCPServers]);
   return (
     <Sidebar className="refined-glass bg-white/4">
       <SidebarHeader className="border-b border-glass-border-soft">
@@ -43,24 +46,22 @@ export function AppSidebar(): JSX.Element {
           <span className="text-xs text-muted-foreground">MCP Servers</span>
           <TooltipProvider delayDuration={100}>
             <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger>
-                  <Server className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-glow-pulse" />
-                </TooltipTrigger>
-                <TooltipContent side="top">Cloudflare Tools: Connected</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Wifi className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-glow-pulse [animation-delay:0.5s]" />
-                </TooltipTrigger>
-                <TooltipContent side="top">Web Search: Connected</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <WifiOff className="w-4 h-4 text-zinc-500" />
-                </TooltipTrigger>
-                <TooltipContent side="top">Custom Server: Disconnected</TooltipContent>
-              </Tooltip>
+              {mcpServers.map((server) => (
+                <Tooltip key={server.name}>
+                  <TooltipTrigger>
+                    <Server className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-glow-pulse" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top">{server.name}: Connected</TooltipContent>
+                </Tooltip>
+              ))}
+              {mcpServers.length === 0 && (
+                 <Tooltip>
+                  <TooltipTrigger>
+                    <Server className="w-4 h-4 text-zinc-500" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top">No MCP Servers Configured</TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </TooltipProvider>
         </div>

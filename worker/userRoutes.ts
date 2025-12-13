@@ -105,7 +105,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
                     const truncated = cleanMessage.length > 40
                         ? cleanMessage.slice(0, 37) + '...'
                         : cleanMessage;
-                    sessionTitle = `${truncated} • ${dateTime}`;
+                    sessionTitle = `${truncated} �� ${dateTime}`;
                 } else {
                     sessionTitle = `Chat ${dateTime}`;
                 }
@@ -250,7 +250,24 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
             }, { status: 500 });
         }
     });
-    // Example route - you can remove this
-    app.get('/api/test', (c) => c.json({ success: true, data: { name: 'this works' }}));
-    // 🤖 AI Extension Point: Add more custom routes here
+    // MCP Server Management Routes
+    app.get('/api/mcp/servers', async (c) => {
+        const controller = getAppController(c.env);
+        const servers = await controller.listMCPServers();
+        return c.json({ success: true, data: servers });
+    });
+    app.post('/api/mcp/servers', async (c) => {
+        const { name, sseUrl } = await c.req.json();
+        if (!name || !sseUrl) return c.json({ success: false, error: 'Name and SSE URL are required' }, { status: 400 });
+        const controller = getAppController(c.env);
+        await controller.addMCPServer(name, sseUrl);
+        return c.json({ success: true });
+    });
+    app.delete('/api/mcp/servers/:name', async (c) => {
+        const name = c.req.param('name');
+        const controller = getAppController(c.env);
+        const deleted = await controller.removeMCPServer(name);
+        if (!deleted) return c.json({ success: false, error: 'Server not found' }, { status: 404 });
+        return c.json({ success: true });
+    });
 }
