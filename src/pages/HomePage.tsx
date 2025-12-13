@@ -1,138 +1,119 @@
-// Home page of the app.
-// Currently a demo placeholder "please wait" screen.
-// Replace this file with your actual app UI. Do not delete it to use some other file as homepage. Simply replace the entire contents of this file.
-
-import { useEffect, useMemo, useState } from 'react'
-import { Sparkles } from 'lucide-react'
-
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { HAS_TEMPLATE_DEMO, TemplateDemo } from '@/components/TemplateDemo'
-import { Button } from '@/components/ui/button'
-import { Toaster, toast } from '@/components/ui/sonner'
-
-function formatDuration(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 1000))
-  const m = Math.floor(total / 60)
-  const s = total % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
-}
-
+import React, { useState, useEffect, useCallback } from 'react';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { ChatArea } from '@/components/chat/ChatArea';
+import { chatService } from '@/lib/chat';
+import { useAppStore } from '@/lib/store';
+import { Message } from 'worker/types';
+import { Toaster, toast } from '@/components/ui/sonner';
 export function HomePage() {
-  const [coins, setCoins] = useState(0)
-  const [isRunning, setIsRunning] = useState(false)
-  const [startedAt, setStartedAt] = useState<number | null>(null)
-  const [elapsedMs, setElapsedMs] = useState(0)
-
-  useEffect(() => {
-    if (!isRunning || startedAt === null) return
-
-    const t = setInterval(() => {
-      setElapsedMs(Date.now() - startedAt)
-    }, 250)
-
-    return () => clearInterval(t)
-  }, [isRunning, startedAt])
-
-  const formatted = useMemo(() => formatDuration(elapsedMs), [elapsedMs])
-
-  const onPleaseWait = () => {
-    setCoins((c) => c + 1)
-
-    if (!isRunning) {
-      // Resume from the current elapsed time
-      setStartedAt(Date.now() - elapsedMs)
-      setIsRunning(true)
-      toast.success('Building your app…', {
-        description: "Hang tight — we're setting everything up.",
-      })
-      return
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [streamingMessage, setStreamingMessage] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [controller, setController] = useState<AbortController | null>(null);
+  const activeSessionId = useAppStore(s => s.activeSessionId);
+  const setActiveSessionId = useAppStore(s => s.setActiveSessionId);
+  const loadSession = useCallback(async (sessionId: string) => {
+    chatService.switchSession(sessionId);
+    const res = await chatService.getMessages();
+    if (res.success && res.data) {
+      setMessages(res.data.messages);
+    } else {
+      toast.error("Failed to load session.");
+      setMessages([]);
     }
-
-    setIsRunning(false)
-    toast.info('Still working…', {
-      description: 'You can come back in a moment.',
-    })
-  }
-
-  const onReset = () => {
-    setCoins(0)
-    setIsRunning(false)
-    setStartedAt(null)
-    setElapsedMs(0)
-    toast('Reset complete')
-  }
-
-  const onAddCoin = () => {
-    setCoins((c) => c + 1)
-    toast('Coin added')
-  }
-
+  }, []);
+  useEffect(() => {
+    const initializeSession = async () => {
+      if (activeSessionId) {
+        await loadSession(activeSessionId);
+      } else {
+        const res = await chatService.createSession();
+        if (res.success && res.data) {
+          const newSessionId = res.data.sessionId;
+          setActiveSessionId(newSessionId);
+          chatService.switchSession(newSessionId);
+          setMessages([]);
+        } else {
+          toast.error("Failed to create a new session.");
+        }
+      }
+    };
+    initializeSession();
+  }, [activeSessionId, setActiveSessionId, loadSession]);
+  const handleSendMessage = async (message: string) => {
+    setIsProcessing(true);
+    setStreamingMessage('');
+    const newAbortController = new AbortController();
+    setController(newAbortController);
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      content: message,
+      timestamp: Date.now(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    // Create a new session if it's the first message
+    if (messages.length === 0) {
+        const res = await chatService.createSession(undefined, chatService.getSessionId(), message);
+        if (res.success && res.data) {
+            setActiveSessionId(res.data.sessionId);
+        }
+    }
+    try {
+      await chatService.sendMessage(message, undefined, (chunk) => {
+        if (newAbortController.signal.aborted) {
+          // This part is tricky as the fetch promise won't reject on abort.
+          // We rely on the stop handler to clean up state.
+          return;
+        }
+        setStreamingMessage(prev => prev + chunk);
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        toast.error("An error occurred while sending the message.");
+      }
+    } finally {
+      const finalMessages = await chatService.getMessages();
+      if (finalMessages.success && finalMessages.data) {
+        setMessages(finalMessages.data.messages);
+      }
+      setStreamingMessage('');
+      setIsProcessing(false);
+      setController(null);
+    }
+  };
+  const handleStop = () => {
+    if (controller) {
+      controller.abort();
+      setController(null);
+      setIsProcessing(false);
+      // Persist the partially streamed message
+      const finalMessages = [...messages];
+      if (streamingMessage) {
+        finalMessages.push({
+          id: 'stopped-stream',
+          role: 'assistant',
+          content: streamingMessage + ' [Stopped by user]',
+          timestamp: Date.now(),
+        });
+      }
+      setMessages(finalMessages);
+      setStreamingMessage('');
+      toast.info("Generation stopped.");
+    }
+  };
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 overflow-hidden relative">
-      <ThemeToggle />
-      <div className="absolute inset-0 bg-gradient-rainbow opacity-10 dark:opacity-20 pointer-events-none" />
-
-      <div className="text-center space-y-8 relative z-10 animate-fade-in w-full">
-        <div className="flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-primary floating">
-            <Sparkles className="w-8 h-8 text-white rotating" />
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-balance leading-tight">
-            Creating your <span className="text-gradient">app</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto text-pretty">
-            Your application would be ready soon.
-          </p>
-        </div>
-
-        {HAS_TEMPLATE_DEMO ? (
-          <div className="max-w-5xl mx-auto text-left">
-            <TemplateDemo />
-          </div>
-        ) : (
-          <>
-            <div className="flex justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={onPleaseWait}
-                className="btn-gradient px-8 py-4 text-lg font-semibold hover:-translate-y-0.5 transition-all duration-200"
-                aria-live="polite"
-              >
-                Please Wait
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <div>
-                Time elapsed:{' '}
-                <span className="font-medium tabular-nums text-foreground">{formatted}</span>
-              </div>
-              <div>
-                Coins:{' '}
-                <span className="font-medium tabular-nums text-foreground">{coins}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-2">
-              <Button variant="outline" size="sm" onClick={onReset}>
-                Reset
-              </Button>
-              <Button variant="outline" size="sm" onClick={onAddCoin}>
-                Add Coin
-              </Button>
-            </div>
-          </>
-        )}
-      </div>
-
-      <footer className="absolute bottom-8 text-center text-muted-foreground/80">
-        <p>Powered by Cloudflare</p>
-      </footer>
-
-      <Toaster richColors closeButton />
-    </div>
-  )
+    <>
+      <MainLayout>
+        <ChatArea
+          messages={messages}
+          streamingMessage={streamingMessage}
+          isProcessing={isProcessing}
+          onSendMessage={handleSendMessage}
+          onStop={handleStop}
+        />
+      </MainLayout>
+      <Toaster theme="dark" richColors closeButton />
+    </>
+  );
 }

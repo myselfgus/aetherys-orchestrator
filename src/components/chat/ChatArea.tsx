@@ -3,24 +3,22 @@ import { Message } from 'worker/types';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sparkles } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Bot, Sparkles } from 'lucide-react';
 type ChatAreaProps = {
   messages: Message[];
   streamingMessage: string;
   isProcessing: boolean;
   onSendMessage: (message: string) => void;
   onStop: () => void;
-  lastAssistantMessage?: string;
 };
-export function ChatArea({ messages, streamingMessage, isProcessing, onSendMessage, onStop, lastAssistantMessage }: ChatAreaProps) {
+export function ChatArea({ messages, streamingMessage, isProcessing, onSendMessage, onStop }: ChatAreaProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const viewport = scrollAreaRef.current?.querySelector('div[data-radix-scroll-area-viewport]');
-    if (viewport) {
-      setTimeout(() => {
-        viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
-      }, 100);
+    if (scrollAreaRef.current) {
+      const viewport = scrollAreaRef.current.querySelector('div');
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
     }
   }, [messages, streamingMessage]);
   const hasMessages = messages.length > 0 || streamingMessage;
@@ -30,20 +28,9 @@ export function ChatArea({ messages, streamingMessage, isProcessing, onSendMessa
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 lg:py-12 w-full">
           {hasMessages ? (
             <div className="space-y-8">
-              <AnimatePresence initial={false}>
-                {messages.map((msg) => (
-                  <motion.div
-                    key={msg.id}
-                    layout
-                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                  >
-                    <MessageBubble message={msg} />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+              {messages.map((msg) => (
+                <MessageBubble key={msg.id} message={msg} />
+              ))}
               {streamingMessage && (
                 <MessageBubble
                   message={{
@@ -56,7 +43,7 @@ export function ChatArea({ messages, streamingMessage, isProcessing, onSendMessa
               )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-[calc(100vh-250px)] text-center animate-fade-in">
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-250px)] text-center">
               <div className="p-4 bg-cyan-400/10 rounded-full mb-4 border border-cyan-400/20">
                 <Sparkles className="w-10 h-10 text-cyan-300 animate-float" />
               </div>
@@ -68,7 +55,7 @@ export function ChatArea({ messages, streamingMessage, isProcessing, onSendMessa
       </ScrollArea>
       <div className="w-full px-4 pb-4">
         <div className="max-w-4xl mx-auto">
-          <InputArea onSendMessage={onSendMessage} isProcessing={isProcessing} onStop={onStop} lastAssistantMessage={lastAssistantMessage} />
+          <InputArea onSendMessage={onSendMessage} isProcessing={isProcessing} onStop={onStop} />
         </div>
       </div>
     </div>
