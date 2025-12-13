@@ -32,13 +32,13 @@ export function MainLayout({ children }: MainLayoutProps) {
   }, []);
   if (isMobile) {
     return (
-      <div className="h-screen w-screen bg-zinc-900 text-foreground overflow-hidden flex flex-col">
+      <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
         <div className="flex-1 min-h-0 relative">
-          <main className="h-full flex flex-col bg-zinc-900/80">
+          <main className="h-full flex flex-col bg-background/80">
             {children}
           </main>
         </div>
-        <footer className="text-center py-1 text-xs text-muted-foreground/50 bg-zinc-950 border-t border-white/10">
+        <footer className="text-center py-1 text-xs text-muted-foreground/50 bg-background/90 border-t border-border">
           Built with ❤️ at Cloudflare.
         </footer>
         <FileManagerSheet />
@@ -48,7 +48,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
   return (
     <SidebarProvider>
-      <div className="h-screen w-screen bg-zinc-900 text-foreground overflow-hidden flex flex-col">
+      <div className="h-screen w-screen bg-gradient-to-br from-background to-muted/50 text-foreground overflow-hidden flex flex-col">
         <div className="flex-1 min-h-0">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <AnimatePresence initial={false}>
@@ -64,16 +64,16 @@ export function MainLayout({ children }: MainLayoutProps) {
                     defaultSize={18}
                     minSize={15}
                     maxSize={25}
-                    className="min-w-[260px] bg-zinc-950/50 backdrop-blur-lg border-r border-white/10"
+                    className="min-w-[260px] glass-neumorphic bg-sidebar-background backdrop-blur-xl border-r border-sidebar-border"
                   >
                     <AppSidebar />
                   </ResizablePanel>
-                  <ResizableHandle withHandle className="bg-transparent border-x border-white/10 w-2 hover:bg-cyan-400/20 transition-colors duration-300" />
+                  <ResizableHandle withHandle className="bg-transparent border-x border-border w-2 hover:shadow-porcelain-glow dark:hover:shadow-glow transition-all duration-300" />
                 </motion.div>
               )}
             </AnimatePresence>
             <ResizablePanel minSize={30}>
-              <main className="h-full flex flex-col bg-zinc-900/80">
+              <main className="h-full flex flex-col bg-background/80">
                 {children}
               </main>
             </ResizablePanel>
@@ -86,12 +86,12 @@ export function MainLayout({ children }: MainLayoutProps) {
                   exit={{ width: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <ResizableHandle withHandle className="bg-transparent border-x border-white/10 w-2 hover:bg-indigo-500/20 transition-colors duration-300" />
+                  <ResizableHandle withHandle className="bg-transparent border-x border-border w-2 hover:shadow-porcelain-glow dark:hover:shadow-glow transition-all duration-300" />
                   <ResizablePanel
                     defaultSize={30}
                     minSize={25}
                     maxSize={50}
-                    className="min-w-[400px] bg-zinc-950/50 backdrop-blur-lg border-l border-white/10"
+                    className="min-w-[400px] glass-neumorphic bg-sidebar-background backdrop-blur-xl border-l border-sidebar-border"
                   >
                     <ArtifactPanel />
                   </ResizablePanel>
@@ -100,7 +100,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             </AnimatePresence>
           </ResizablePanelGroup>
         </div>
-        <footer className="text-center py-1 text-xs text-muted-foreground/50 bg-zinc-950 border-t border-white/10">
+        <footer className="text-center py-1 text-xs text-muted-foreground/50 bg-background/90 border-t border-border">
           Built with ❤️ at Cloudflare.
         </footer>
       </div>

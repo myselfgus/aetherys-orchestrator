@@ -139,14 +139,25 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+        porcelain: {
+          DEFAULT: 'hsl(40, 50%, 98%)',
+          foreground: 'hsl(224, 10%, 20%)',
+        },
+        'glass-bg': 'hsl(0 0% 100% / 0.05)',
+        'border-glass': 'hsl(0 0% 100% / 0.2)',
   		},
   		boxShadow: {
   			soft: '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
   			glow: '0 0 20px -5px rgba(99, 102, 241, 0.4)',
   			'glow-lg': '0 0 40px -10px rgba(99, 102, 241, 0.3)',
   			primary: '0 0 20px -5px hsl(var(--primary) / 0.4)',
-  			glass: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+  			glass: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+        'neumorphic-out': '6px 6px 12px hsl(var(--background-shadow-dark)), -6px -6px 12px hsl(var(--background-shadow-light))',
+        'neumorphic-in': 'inset 6px 6px 12px hsl(var(--background-shadow-dark)), inset -6px -6px 12px hsl(var(--background-shadow-light))',
+        'neumorphic-out-sm': '3px 3px 6px hsl(var(--background-shadow-dark)), -3px -3px 6px hsl(var(--background-shadow-light))',
+        'neumorphic-in-sm': 'inset 3px 3px 6px hsl(var(--background-shadow-dark)), inset -3px -3px 6px hsl(var(--background-shadow-light))',
+        'porcelain-glow': '0 0 20px hsl(0 0% 100% / 0.5)',
   		},
   		keyframes: {
   			'fade-in': {
@@ -195,6 +206,14 @@ export default {
   					boxShadow: '0 0 40px -5px rgba(99, 102, 241, 0.6)'
   				}
   			},
+        'porcelain-pulse': {
+          '0%, 100%': {
+            boxShadow: '0 0 15px hsl(0 0% 100% / 0.3)'
+          },
+          '50%': {
+            boxShadow: '0 0 30px hsl(0 0% 100% / 0.6)'
+          }
+        },
   			float: {
   				'0%, 100%': {
   					transform: 'translateY(0px)'
@@ -226,6 +245,7 @@ export default {
   			'scale-in': 'scale-in 0.3s ease-out',
   			shimmer: 'shimmer 2s infinite',
   			glow: 'glow 2s ease-in-out infinite',
+        'porcelain-pulse': 'porcelain-pulse 2.5s ease-in-out infinite',
   			float: 'float 3s ease-in-out infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'

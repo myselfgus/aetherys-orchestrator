@@ -142,11 +142,11 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     };
   }, [onSendMessage, isRecording]);
   return (
-    <div className="bg-zinc-800/50 border border-white/10 rounded-2xl p-2 flex items-end gap-2 backdrop-blur-sm transition-all duration-300 focus-within:ring-2 focus-within:ring-cyan-400/50">
+    <div className="silky-input rounded-2xl p-2 flex items-end gap-2 backdrop-blur-sm focus-within:ring-2 focus-within:ring-ring/50 dark:focus-within:ring-cyan-400/50">
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="flex-shrink-0 text-zinc-400 hover:text-white hover:bg-zinc-700">
+            <Button variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground neumorphic-btn">
               <Paperclip className="w-5 h-5" />
             </Button>
           </TooltipTrigger>
@@ -159,12 +159,12 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Ask Aetherys anything..."
-        className="flex-1 bg-transparent text-zinc-200 placeholder:text-zinc-500 resize-none border-0 focus:ring-0 p-2 text-base"
+        className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground resize-none border-0 focus:ring-0 p-2 text-base"
         maxRows={8}
         disabled={isProcessing}
       />
       {isProcessing ? (
-        <Button onClick={onStop} size="icon" className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white">
+        <Button onClick={onStop} size="icon" className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white neumorphic-btn">
           <Square className="w-5 h-5" />
         </Button>
       ) : (
@@ -172,7 +172,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={handleTTS} variant="ghost" size="icon" className="flex-shrink-0 text-zinc-400 hover:text-white hover:bg-zinc-700">
+                <Button onClick={handleTTS} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground neumorphic-btn">
                   <Volume2 className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
@@ -180,7 +180,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={toggleRecording} variant="ghost" size="icon" className="flex-shrink-0 text-zinc-400 hover:text-white hover:bg-zinc-700">
+                <Button onClick={toggleRecording} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground neumorphic-btn">
                   <AnimatePresence mode="wait">
                     {isRecording ? (
                       <motion.div key="recording" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
@@ -197,7 +197,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
               <TooltipContent>Voice input</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Button onClick={handleSend} size="icon" className="flex-shrink-0 bg-cyan-500 hover:bg-cyan-600 text-white" disabled={!input.trim()}>
+          <Button onClick={handleSend} size="icon" className="flex-shrink-0 bg-cyan-500 hover:bg-cyan-600 text-white neumorphic-btn" disabled={!input.trim()}>
             <Send className="w-5 h-5" />
           </Button>
         </div>
