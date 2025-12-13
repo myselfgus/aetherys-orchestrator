@@ -4,13 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Paperclip, Mic, Send, Square, MicOff, Volume2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+// Augment the global Window interface to include SpeechRecognition APIs for TypeScript
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+export {}; // This makes the file a module
 type InputAreaProps = {
   onSendMessage: (message: string) => void;
   isProcessing: boolean;
   onStop: () => void;
   lastAssistantMessage?: string;
 };
-// Web Speech API might not be available on all browsers or contexts.
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition: SpeechRecognition | null = null;
 if (SpeechRecognition) {
@@ -43,10 +51,18 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     if (isRecording) {
       recognition.stop();
     } else {
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (e) {
+        toast.error("Speech recognition could not be started. Please check microphone permissions.");
+      }
     }
   };
   const handleTTS = () => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      return;
+    }
     if (!lastAssistantMessage) {
       toast.info("No message to read.");
       return;
@@ -60,13 +76,17 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
   };
   useEffect(() => {
     if (!recognition) return;
-    recognition.onstart = () => setIsRecording(true);
-    recognition.onend = () => setIsRecording(false);
-    recognition.onerror = (event) => {
-      toast.error(`Speech recognition error: ${event.error}`);
+    const onStart = () => setIsRecording(true);
+    const onEnd = () => setIsRecording(false);
+    const onError = (event: SpeechRecognitionErrorEvent) => {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        toast.error("Microphone access denied. Please enable it in your browser settings.");
+      } else {
+        toast.error(`Speech recognition error: ${event.error}`);
+      }
       setIsRecording(false);
     };
-    recognition.onresult = (event) => {
+    const onResult = (event: SpeechRecognitionEvent) => {
       const transcript = Array.from(event.results)
         .map(result => result[0])
         .map(result => result.transcript)
@@ -77,7 +97,20 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
         setInput('');
       }
     };
-  }, [onSendMessage]);
+    recognition.addEventListener('start', onStart);
+    recognition.addEventListener('end', onEnd);
+    recognition.addEventListener('error', onError);
+    recognition.addEventListener('result', onResult);
+    return () => {
+      recognition?.removeEventListener('start', onStart);
+      recognition?.removeEventListener('end', onEnd);
+      recognition?.removeEventListener('error', onError);
+      recognition?.removeEventListener('result', onResult);
+      if (isRecording) {
+        recognition?.stop();
+      }
+    };
+  }, [onSendMessage, isRecording]);
   return (
     <div className="bg-zinc-800/50 border border-white/10 rounded-2xl p-2 flex items-end gap-2 backdrop-blur-sm transition-all duration-300 focus-within:ring-2 focus-within:ring-cyan-400/50">
       <TooltipProvider delayDuration={200}>
@@ -118,7 +151,17 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button onClick={toggleRecording} variant="ghost" size="icon" className="flex-shrink-0 text-zinc-400 hover:text-white hover:bg-zinc-700">
-                  {isRecording ? <MicOff className="w-5 h-5 text-red-500 animate-pulse" /> : <Mic className="w-5 h-5" />}
+                  <AnimatePresence mode="wait">
+                    {isRecording ? (
+                      <motion.div key="recording" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
+                        <MicOff className="w-5 h-5 text-red-500 animate-pulse" />
+                      </motion.div>
+                    ) : (
+                      <motion.div key="idle" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
+                        <Mic className="w-5 h-5" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Voice input</TooltipContent>

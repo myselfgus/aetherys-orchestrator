@@ -1,14 +1,61 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
-import { X, Code, Eye, Terminal } from 'lucide-react';
+import { X, Code, Eye, Terminal, GalleryHorizontal, Download, Eraser } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from 'sonner';
+type Shape = { type: 'rect'; x: number; y: number; width: number; height: number; color: string; }
+  | { type: 'circle'; x: number; y: number; radius: number; color: string; }
+  | { type: 'text'; x: number; y: number; text: string; font: string; color: string; };
 export function ArtifactPanel() {
   const artifact = useAppStore(s => s.artifact);
   const clearArtifact = useAppStore(s => s.clearArtifact);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    if (artifact.type === 'canvas' && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const draw = () => {
+        try {
+          const data = JSON.parse(artifact.content);
+          const shapes: Shape[] = data.shapes || [];
+          // Resize canvas based on parent
+          const parent = canvas.parentElement;
+          if (parent) {
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+          }
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          shapes.forEach(shape => {
+            ctx.fillStyle = shape.color;
+            if (shape.type === 'rect') {
+              ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+            } else if (shape.type === 'circle') {
+              ctx.beginPath();
+              ctx.arc(shape.x, shape.y, shape.radius, 0, 2 * Math.PI);
+              ctx.fill();
+            } else if (shape.type === 'text') {
+              ctx.font = shape.font;
+              ctx.fillText(shape.text, shape.x, shape.y);
+            }
+          });
+        } catch (e) {
+          toast.error("Failed to render canvas: Invalid drawing commands.");
+          console.error("Canvas render error:", e);
+        }
+      };
+      const resizeObserver = new ResizeObserver(draw);
+      if (canvas.parentElement) {
+        resizeObserver.observe(canvas.parentElement);
+      }
+      requestAnimationFrame(draw);
+      return () => resizeObserver.disconnect();
+    }
+  }, [artifact]);
   if (!artifact.type) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-4 text-zinc-500">
@@ -18,7 +65,16 @@ export function ArtifactPanel() {
       </div>
     );
   }
-  const defaultTab = artifact.type === 'preview' ? 'preview' : 'code';
+  const handleExport = () => {
+    if (canvasRef.current) {
+      const dataUrl = canvasRef.current.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'artifact.png';
+      link.href = dataUrl;
+      link.click();
+    }
+  };
+  const defaultTab = artifact.type === 'preview' ? 'preview' : artifact.type === 'canvas' ? 'canvas' : 'code';
   return (
     <div className="h-full flex flex-col bg-zinc-900/50">
       <header className="flex items-center justify-between p-2 border-b border-white/10 flex-shrink-0">
@@ -29,33 +85,29 @@ export function ArtifactPanel() {
       </header>
       <div className="flex-1 min-h-0">
         <Tabs defaultValue={defaultTab} className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-3 bg-zinc-950 rounded-none border-b border-white/10">
-            <TabsTrigger value="code" disabled={artifact.type === 'preview' && !artifact.content}><Code className="w-4 h-4 mr-2"/>Code</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 bg-zinc-950 rounded-none border-b border-white/10">
+            <TabsTrigger value="code"><Code className="w-4 h-4 mr-2"/>Code</TabsTrigger>
             <TabsTrigger value="preview" disabled={artifact.type !== 'preview'}><Eye className="w-4 h-4 mr-2"/>Preview</TabsTrigger>
+            <TabsTrigger value="canvas" disabled={artifact.type !== 'canvas'}><GalleryHorizontal className="w-4 h-4 mr-2"/>Canvas</TabsTrigger>
             <TabsTrigger value="console" disabled><Terminal className="w-4 h-4 mr-2"/>Console</TabsTrigger>
           </TabsList>
           <TabsContent value="code" className="flex-1 min-h-0">
             <ScrollArea className="h-full">
-              <SyntaxHighlighter
-                language={artifact.language || 'plaintext'}
-                style={vscDarkPlus}
-                customStyle={{ background: 'transparent', margin: 0, height: '100%' }}
-                codeTagProps={{ style: { fontFamily: 'inherit' } }}
-                showLineNumbers
-              >
+              <SyntaxHighlighter language={artifact.language || 'plaintext'} style={vscDarkPlus} customStyle={{ background: 'transparent', margin: 0, height: '100%' }} codeTagProps={{ style: { fontFamily: 'inherit' } }} showLineNumbers>
                 {artifact.content}
               </SyntaxHighlighter>
             </ScrollArea>
           </TabsContent>
           <TabsContent value="preview" className="flex-1 min-h-0 bg-white">
-            {artifact.type === 'preview' && (
-              <iframe
-                srcDoc={artifact.content}
-                title="Artifact Preview"
-                sandbox="allow-scripts"
-                className="w-full h-full border-0"
-              />
-            )}
+            {artifact.type === 'preview' && <iframe srcDoc={artifact.content} title="Artifact Preview" sandbox="allow-scripts" className="w-full h-full border-0"/>}
+          </TabsContent>
+          <TabsContent value="canvas" className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 relative bg-zinc-950">
+              <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
+            </div>
+            <div className="p-2 border-t border-white/10 flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={handleExport}><Download className="w-4 h-4 mr-2"/>Export PNG</Button>
+            </div>
           </TabsContent>
           <TabsContent value="console" className="flex-1 min-h-0 p-4">
             <p className="text-zinc-500 text-sm">Console output will appear here.</p>

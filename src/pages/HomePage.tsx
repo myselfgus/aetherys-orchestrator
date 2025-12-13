@@ -28,8 +28,9 @@ export function HomePage() {
     const initialize = async () => {
       await fetchSessions();
       const sessions = useAppStore.getState().sessions;
-      if (activeSessionId && sessions.some(s => s.id === activeSessionId)) {
-        await loadSession(activeSessionId);
+      const currentActiveId = useAppStore.getState().activeSessionId;
+      if (currentActiveId && sessions.some(s => s.id === currentActiveId)) {
+        // Active session is valid, do nothing, the other effect will load it
       } else if (sessions.length > 0) {
         setActiveSessionId(sessions[0].id);
       } else {
@@ -37,7 +38,7 @@ export function HomePage() {
       }
     };
     initialize();
-  }, []); // Run only once on mount
+  }, [fetchSessions, createNewSession, setActiveSessionId]);
   useEffect(() => {
     if (activeSessionId) {
       loadSession(activeSessionId);
@@ -46,6 +47,16 @@ export function HomePage() {
     }
   }, [activeSessionId, loadSession]);
   const handleSendMessage = async (message: string) => {
+    let currentSessionId = activeSessionId;
+    if (!currentSessionId) {
+      const newId = await createNewSession();
+      if (newId) {
+        currentSessionId = newId;
+      } else {
+        toast.error("Could not create a new session.");
+        return;
+      }
+    }
     setIsProcessing(true);
     setStreamingMessage('');
     const newAbortController = new AbortController();
@@ -57,9 +68,9 @@ export function HomePage() {
       timestamp: Date.now(),
     };
     setMessages(prev => [...prev, userMessage]);
-    if (messages.length === 0 && activeSessionId) {
+    if (messages.length === 0 && currentSessionId) {
       const title = message.substring(0, 40) + (message.length > 40 ? '...' : '');
-      await chatService.updateSessionTitle(activeSessionId, title);
+      await chatService.updateSessionTitle(currentSessionId, title);
       await fetchSessions();
     }
     try {
@@ -101,8 +112,9 @@ export function HomePage() {
     }
   };
   const lastAssistantMessage = useMemo(() => {
-    return [...messages].reverse().find(m => m.role === 'assistant')?.content;
-  }, [messages]);
+    return [...messages, {content: streamingMessage, role: 'assistant'}]
+      .reverse().find(m => m.role === 'assistant' && m.content)?.content;
+  }, [messages, streamingMessage]);
   return (
     <>
       <MainLayout>

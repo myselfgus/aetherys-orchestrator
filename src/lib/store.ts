@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { SessionInfo } from 'worker/types';
 import { chatService } from './chat';
 export type Artifact = {
-  type: 'code' | 'preview' | 'text' | null;
+  type: 'code' | 'preview' | 'text' | 'canvas' | null;
   language?: string;
   content: string;
 };

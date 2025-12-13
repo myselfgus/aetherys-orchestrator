@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { Message, ToolCall } from 'worker/types';
 import { cn } from '@/lib/utils';
-import { Bot, User, Code, Eye, Wrench } from 'lucide-react';
+import { Bot, User, Code, Eye, Wrench, GalleryHorizontal } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,12 +15,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { toast } from 'sonner';
 type MessageBubbleProps = {
   message: Message;
 };
-const ARTIFACT_REGEX = /```artifact:(\w+)\s*([\s\S]*?)```/g;
+const ARTIFACT_REGEX = /```artifact:(\w+)\s*([\s\S]*?)```/gs;
 export function MessageBubble({ message }: MessageBubbleProps) {
-  const { setArtifact } = useAppStore();
+  const setArtifact = useAppStore(s => s.setArtifact);
   const { cleanContent, artifacts } = useMemo(() => {
     const artifacts: { type: string, language: string, content: string }[] = [];
     const cleanContent = message.content.replace(ARTIFACT_REGEX, (match, language, content) => {
@@ -30,11 +31,25 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     return { cleanContent, artifacts };
   }, [message.content]);
   const handleViewArtifact = (artifact: { language: string; content: string }) => {
-    setArtifact({
-      type: artifact.language === 'html' ? 'preview' : 'code',
-      language: artifact.language,
-      content: artifact.content,
-    });
+    if (artifact.language === 'canvas') {
+      try {
+        JSON.parse(artifact.content); // Validate JSON before setting
+        setArtifact({
+          type: 'canvas',
+          language: 'json',
+          content: artifact.content,
+        });
+      } catch (e) {
+        toast.error("Failed to parse canvas artifact: Invalid JSON.");
+        console.error("Invalid canvas JSON:", e);
+      }
+    } else {
+      setArtifact({
+        type: artifact.language === 'html' ? 'preview' : 'code',
+        language: artifact.language,
+        content: artifact.content,
+      });
+    }
   };
   const isUser = message.role === 'user';
   return (
@@ -43,7 +58,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {isUser ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-white" />}
       </div>
       <div className={cn('w-full max-w-3xl rounded-lg p-4 space-y-4', isUser ? 'bg-indigo-600/20' : 'bg-zinc-800/50 border border-white/10')}>
-        <div className="prose prose-invert prose-sm md:prose-base max-w-none prose-pre:bg-zinc-900/70 prose-pre:p-0 prose-pre:rounded-md">
+        <div className="prose prose-invert prose-sm md:prose-base max-w-none prose-pre:bg-zinc-900/70 prose-pre:p-0 prose-pre:rounded-md prose-table:w-full prose-table:overflow-x-auto">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
@@ -79,7 +94,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               <div key={index} className="bg-zinc-900/50 p-3 rounded-md flex justify-between items-center">
                 <span className="text-sm font-mono text-zinc-400">artifact.{artifact.language}</span>
                 <Button size="sm" variant="ghost" onClick={() => handleViewArtifact(artifact)} className="text-cyan-400 hover:bg-cyan-400/10 hover:text-cyan-300">
-                  <Eye className="w-4 h-4 mr-2" /> View
+                  {artifact.language === 'canvas' ? <GalleryHorizontal className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />} View
                 </Button>
               </div>
             ))}
@@ -98,6 +113,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                       <div key={toolCall.id} className="font-mono text-xs text-zinc-400">
                         <p><strong>{toolCall.name}</strong></p>
                         <pre className="text-zinc-500 text-wrap">args: {JSON.stringify(toolCall.arguments)}</pre>
+                        {toolCall.result && <pre className="text-zinc-400 mt-1 text-wrap">result: {JSON.stringify(toolCall.result)}</pre>}
                       </div>
                     ))}
                   </div>
