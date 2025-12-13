@@ -140,28 +140,17 @@ export default {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
-        porcelain: {
-          DEFAULT: 'hsl(40, 50%, 98%)',
-          foreground: 'hsl(224, 10%, 15%)',
-        },
         'glass-bg': 'hsl(0 0% 100% / 0.05)',
+        'glass-border-soft': 'hsl(0 0% 100% / 0.1)',
         'glass-border': 'hsl(0 0% 100% / 0.2)',
         'glass-border-bold': 'hsl(0 0% 100% / 0.3)',
   		},
   		boxShadow: {
-  			soft: '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-  			glow: '0 0 20px -5px rgba(99, 102, 241, 0.4)',
-  			'glow-lg': '0 0 40px -10px rgba(99, 102, 241, 0.3)',
-  			primary: '0 0 20px -5px hsl(var(--primary) / 0.4)',
-  			glass: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
-        'neumorphic-out': '6px 6px 12px hsl(var(--background-shadow-dark)), -6px -6px 12px hsl(var(--background-shadow-light))',
-        'neumorphic-in': 'inset 6px 6px 12px hsl(var(--background-shadow-dark)), inset -6px -6px 12px hsl(var(--background-shadow-light))',
-        'neumorphic-out-sm': '3px 3px 6px hsl(var(--background-shadow-dark)), -3px -3px 6px hsl(var(--background-shadow-light))',
-        'neumorphic-in-sm': 'inset 3px 3px 6px hsl(var(--background-shadow-dark)), inset -3px -3px 6px hsl(var(--background-shadow-light))',
-        'neumorphic-strong-out': '5px 5px 10px hsl(var(--background-shadow-dark)), -5px -5px 10px hsl(var(--background-shadow-light))',
-        'neumorphic-strong-in': 'inset 5px 5px 10px hsl(var(--background-shadow-dark)), inset -5px -5px 10px hsl(var(--background-shadow-light))',
+        'ultra-neumorphic-out': '2px 2px 4px rgba(0,0,0,0.05), -2px -2px 4px rgba(255,255,255,0.8)',
+        'ultra-neumorphic-in': 'inset 2px 2px 4px rgba(0,0,0,0.05), inset -2px -2px 4px rgba(255,255,255,0.8)',
+        'liquid-glow': '0 8px 32px rgba(0, 0, 0, 0.05)',
+        'inset-glow': 'inset 0 0 20px rgba(255, 255, 255, 0.5)',
         'porcelain-glow': '0 0 20px hsl(0 0% 100% / 0.5)',
-        'liquid-reflection': '0 4px 30px rgba(0, 0, 0, 0.1)',
   		},
   		keyframes: {
   			'fade-in': {
@@ -202,15 +191,7 @@ export default {
   					transform: 'translateX(100%)'
   				}
   			},
-  			glow: {
-  				'0%, 100%': {
-  					boxShadow: '0 0 20px -5px rgba(99, 102, 241, 0.4)'
-  				},
-  				'50%': {
-  					boxShadow: '0 0 40px -5px rgba(99, 102, 241, 0.6)'
-  				}
-  			},
-        'porcelain-pulse': {
+        'porcelain-glow-pulse': {
           '0%, 100%': {
             boxShadow: '0 0 15px hsl(0 0% 100% / 0.3)'
           },
@@ -226,9 +207,9 @@ export default {
   					transform: 'translateY(-10px)'
   				}
   			},
-        'scale-float': {
-          '0%, 100%': { transform: 'translateY(0px) scale(1)' },
-          '50%': { transform: 'translateY(-5px) scale(1.03)' },
+        'liquid-scale': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.02)' },
         },
   			'accordion-down': {
   				from: {
@@ -252,10 +233,9 @@ export default {
   			'slide-up': 'slide-up 0.4s ease-out',
   			'scale-in': 'scale-in 0.3s ease-out',
   			shimmer: 'shimmer 2s infinite',
-  			glow: 'glow 2s ease-in-out infinite',
-        'porcelain-pulse': 'porcelain-pulse 2s ease-in-out infinite alternate',
+        'porcelain-glow-pulse': 'porcelain-glow-pulse 3s ease-in-out infinite alternate',
   			float: 'float 3s ease-in-out infinite',
-        'scale-float': 'scale-float 4s ease-in-out infinite',
+        'liquid-scale': 'liquid-scale 4s ease-in-out infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		},

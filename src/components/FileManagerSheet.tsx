@@ -76,7 +76,7 @@ export function FileManagerSheet() {
   };
   return (
     <Sheet open={isFileManagerOpen} onOpenChange={toggleFileManager}>
-      <SheetContent side="left" className="sm:max-w-lg w-[90vw] bg-zinc-900/80 backdrop-blur-lg border-r-white/10 text-zinc-200 flex flex-col">
+      <SheetContent side="left" className="sm:max-w-lg w-[90vw] refined-glass bg-white/6 text-foreground flex flex-col">
         <SheetHeader>
           <SheetTitle>File Manager</SheetTitle>
           <SheetDescription>
@@ -90,7 +90,7 @@ export function FileManagerSheet() {
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`relative border-2 border-dashed border-zinc-600 rounded-lg p-8 text-center cursor-pointer hover:border-cyan-400 hover:bg-zinc-800/50 transition-colors ${isDragActive ? 'border-cyan-400 bg-cyan-900/20' : ''}`}
+            className={`relative border-2 border-dashed border-glass-border-soft rounded-lg p-8 text-center cursor-pointer hover:border-accent hover:shadow-ultra-neumorphic-out hover:animate-liquid-scale transition-all duration-300 ${isDragActive ? 'border-accent bg-accent/10' : ''}`}
           >
             <input
               ref={fileInputRef}
@@ -107,13 +107,13 @@ export function FileManagerSheet() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search knowledge base..."
-              className="pl-9"
+              className="pl-9 glass-bg shadow-inset-glow focus:ring-2 focus:ring-white/20"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </div>
-          <div className="flex-1 min-h-0 overflow-auto">
+          <div className="flex-1 min-h-0 overflow-auto porcelain-glass-panel">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -132,8 +132,8 @@ export function FileManagerSheet() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8"><Download className="w-4 h-4"/></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(file.name)}><Trash2 className="w-4 h-4 text-red-500/80 hover:text-red-500"/></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 minimal-neumorphic"><Download className="w-4 h-4"/></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 minimal-neumorphic" onClick={() => handleDelete(file.name)}><Trash2 className="w-4 h-4 text-red-500/80 hover:text-red-500"/></Button>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -79,22 +79,22 @@ export function ArtifactPanel() {
   };
   const defaultTab = artifact.type === 'preview' ? 'preview' : artifact.type === 'canvas' ? 'canvas' : 'code';
   return (
-    <div className="h-full flex flex-col glass-neumorphic bg-white/4">
-      <header className="flex items-center justify-between p-2 border-b border-glass-border-bold flex-shrink-0">
+    <div className="h-full flex flex-col refined-glass bg-white/5">
+      <header className="flex items-center justify-between p-2 border-b border-glass-border-soft flex-shrink-0">
         <h3 className="font-semibold text-sm ml-2">Artifact Foundry</h3>
-        <Button variant="ghost" size="icon" onClick={clearArtifact} className="text-muted-foreground hover:text-foreground hover:bg-muted neumorphic-btn">
+        <Button variant="ghost" size="icon" onClick={clearArtifact} className="text-muted-foreground hover:text-foreground hover:bg-muted minimal-neumorphic">
           <X className="w-4 h-4" />
         </Button>
       </header>
       <div className="flex-1 min-h-0">
         <Tabs defaultValue={defaultTab} className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-4 bg-transparent rounded-none border-b border-glass-border-bold shadow-neumorphic-strong-in">
+          <TabsList className="grid w-full grid-cols-4 bg-transparent rounded-none border-b border-glass-border-soft shadow-ultra-neumorphic-in">
             <TabsTrigger value="code"><Code className="w-4 h-4 mr-2"/>Code</TabsTrigger>
             <TabsTrigger value="preview" disabled={artifact.type !== 'preview'}><Eye className="w-4 h-4 mr-2"/>Preview</TabsTrigger>
             <TabsTrigger value="canvas" disabled={artifact.type !== 'canvas'}><GalleryHorizontal className="w-4 h-4 mr-2"/>Canvas</TabsTrigger>
             <TabsTrigger value="console" disabled><Terminal className="w-4 h-4 mr-2"/>Console</TabsTrigger>
           </TabsList>
-          <TabsContent value="code" className="flex-1 min-h-0 bg-white/4 inner-glow">
+          <TabsContent value="code" className="flex-1 min-h-0 porcelain-glass-panel bg-white/5">
             <ScrollArea className="h-full">
               <SyntaxHighlighter language={artifact.language || 'plaintext'} style={isDark ? vscDarkPlus : vs} customStyle={{ background: 'transparent', margin: 0, height: '100%' }} codeTagProps={{ style: { fontFamily: 'inherit' } }} showLineNumbers>
                 {artifact.content}
@@ -105,11 +105,11 @@ export function ArtifactPanel() {
             {artifact.type === 'preview' && <iframe srcDoc={artifact.content} title="Artifact Preview" sandbox="allow-scripts" className="w-full h-full border-0"/>}
           </TabsContent>
           <TabsContent value="canvas" className="flex-1 min-h-0 flex flex-col">
-            <div className="flex-1 min-h-0 relative bg-muted/50 shadow-neumorphic-in hover:shadow-neumorphic-strong-out hover:scale-[1.01] transition-all duration-[400ms]">
-              <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full border-glass-border-bold" />
+            <div className="flex-1 min-h-0 relative bg-muted/50 shadow-ultra-neumorphic-in hover:animate-liquid-scale transition-all duration-500">
+              <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full border-glass-border-soft animate-porcelain-glow-pulse" />
             </div>
-            <div className="p-2 border-t border-glass-border-bold flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handleExport} className="neumorphic-btn animate-scale-float"><Download className="w-4 h-4 mr-2"/>Export PNG</Button>
+            <div className="p-2 border-t border-glass-border-soft flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={handleExport} className="minimal-neumorphic animate-liquid-scale"><Download className="w-4 h-4 mr-2"/>Export PNG</Button>
             </div>
           </TabsContent>
           <TabsContent value="console" className="flex-1 min-h-0 p-4">

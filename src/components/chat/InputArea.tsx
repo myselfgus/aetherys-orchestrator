@@ -142,11 +142,11 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
     };
   }, [onSendMessage, isRecording]);
   return (
-    <div className="glass-neumorphic rounded-3xl p-2 flex items-end gap-2 focus-within:shadow-porcelain-glow focus-within:ring-2 ring-white/30">
+    <div className="refined-glass rounded-3xl p-2 flex items-end gap-2 focus-within:shadow-ultra-neumorphic-out focus-within:ring-2 ring-white/20">
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground neumorphic-btn">
+            <Button variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground minimal-neumorphic">
               <Paperclip className="w-5 h-5" />
             </Button>
           </TooltipTrigger>
@@ -159,12 +159,12 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Ask Aetherys anything..."
-        className="flex-1 bg-white/4 shadow-neumorphic-strong-in text-foreground placeholder:text-muted-foreground resize-none border-0 focus:ring-0 p-2 text-base rounded-lg transition-transform duration-300 focus:scale-[1.01]"
+        className="flex-1 bg-white/5 shadow-inset-glow text-foreground placeholder:text-muted-foreground resize-none border-0 focus:ring-0 p-2 text-base rounded-lg transition-transform duration-300 focus:animate-liquid-scale"
         maxRows={8}
         disabled={isProcessing}
       />
       {isProcessing ? (
-        <Button onClick={onStop} size="icon" className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white neumorphic-btn">
+        <Button onClick={onStop} size="icon" className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white minimal-neumorphic">
           <Square className="w-5 h-5" />
         </Button>
       ) : (
@@ -172,7 +172,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={handleTTS} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground neumorphic-btn animate-scale-float [animation-delay:1s]">
+                <Button onClick={handleTTS} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground minimal-neumorphic animate-liquid-scale [animation-delay:1s]">
                   <Volume2 className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
@@ -180,11 +180,11 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={toggleRecording} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground neumorphic-btn animate-scale-float [animation-delay:0.5s]">
+                <Button onClick={toggleRecording} variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground minimal-neumorphic animate-liquid-scale [animation-delay:0.5s]">
                   <AnimatePresence mode="wait">
                     {isRecording ? (
                       <motion.div key="recording" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                        <MicOff className="w-5 h-5 text-red-500 animate-pulse" />
+                        <MicOff className="w-5 h-5 text-red-500 animate-porcelain-glow-pulse" />
                       </motion.div>
                     ) : (
                       <motion.div key="idle" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
@@ -197,7 +197,7 @@ export function InputArea({ onSendMessage, isProcessing, onStop, lastAssistantMe
               <TooltipContent>Voice input</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Button onClick={handleSend} size="icon" className="flex-shrink-0 bg-cyan-500 hover:bg-cyan-600 text-white neumorphic-btn hover:scale-110 active:scale-95 transition-transform" disabled={!input.trim()}>
+          <Button onClick={handleSend} size="icon" className="flex-shrink-0 bg-cyan-500 hover:bg-cyan-600 text-white minimal-neumorphic hover:animate-liquid-scale active:animate-porcelain-glow-pulse transition-transform" disabled={!input.trim()}>
             <Send className="w-5 h-5" />
           </Button>
         </div>

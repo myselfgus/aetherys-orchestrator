@@ -22,7 +22,7 @@ export function SettingsDialog() {
   const toggleSettings = useAppStore(s => s.toggleSettings);
   return (
     <Dialog open={isSettingsOpen} onOpenChange={toggleSettings}>
-      <DialogContent className="sm:max-w-[625px] bg-zinc-900/80 backdrop-blur-lg border-white/10 text-zinc-200">
+      <DialogContent className="sm:max-w-[625px] refined-glass bg-white/6 text-foreground">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
@@ -30,7 +30,7 @@ export function SettingsDialog() {
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="models" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 porcelain-glass-panel">
             <TabsTrigger value="models">Models</TabsTrigger>
             <TabsTrigger value="api">API Config</TabsTrigger>
             <TabsTrigger value="user">Preferences</TabsTrigger>
@@ -38,9 +38,9 @@ export function SettingsDialog() {
           <TabsContent value="models" className="py-4">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="model-select">Default Model</Label>
+                <Label htmlFor="model-select" className="font-semibold">Default Model</Label>
                 <Select defaultValue={MODELS[0].id}>
-                  <SelectTrigger id="model-select" className="w-full">
+                  <SelectTrigger id="model-select" className="w-full glass-bg shadow-inset-glow focus:ring-2 focus:ring-white/20">
                     <SelectValue placeholder="Select a model" />
                   </SelectTrigger>
                   <SelectContent>
@@ -63,18 +63,18 @@ export function SettingsDialog() {
                 </AlertDescription>
               </Alert>
               <div className="space-y-2">
-                <Label htmlFor="cf-base-url">Cloudflare AI Gateway URL</Label>
-                <Input id="cf-base-url" value="https://gateway.ai.cloudflare.com/v1/.../openai" readOnly />
+                <Label htmlFor="cf-base-url" className="font-semibold">Cloudflare AI Gateway URL</Label>
+                <Input id="cf-base-url" value="https://gateway.ai.cloudflare.com/v1/.../openai" readOnly className="glass-bg shadow-inset-glow" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cf-api-key">Cloudflare API Key</Label>
-                <Input id="cf-api-key" type="password" value="••••••••••••••••••••" readOnly />
+                <Label htmlFor="cf-api-key" className="font-semibold">Cloudflare API Key</Label>
+                <Input id="cf-api-key" type="password" value="••••••••••••••••••••" readOnly className="glass-bg shadow-inset-glow" />
               </div>
             </div>
           </TabsContent>
           <TabsContent value="user" className="py-4">
             <div className="flex items-center justify-between">
-              <Label>Theme</Label>
+              <Label className="font-semibold">Theme</Label>
               <ThemeToggle className="relative top-0 right-0" />
             </div>
           </TabsContent>

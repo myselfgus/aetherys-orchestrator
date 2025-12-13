@@ -21,37 +21,37 @@ export function AppSidebar(): JSX.Element {
     fetchSessions();
   }, [fetchSessions]);
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-glass-border-bold">
+    <Sidebar className="refined-glass bg-white/4">
+      <SidebarHeader className="border-b border-glass-border-soft">
         <div className="flex items-center gap-2 p-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center animate-scale-float shadow-lg shadow-cyan-500/20">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center animate-liquid-scale shadow-lg shadow-cyan-500/20 animate-porcelain-glow-pulse">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <span className="text-lg font-semibold tracking-tighter">Aetherys</span>
+          <span className="text-lg font-semibold tracking-tighter text-foreground/95">Aetherys</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2 flex flex-col">
-        <Button variant="ghost" className="w-full justify-start gap-2 text-base mb-2 neumorphic-btn font-semibold" onClick={createNewSession}>
+        <Button variant="ghost" className="w-full justify-start gap-2 text-base mb-2 minimal-neumorphic font-semibold text-foreground/95" onClick={createNewSession}>
           <PlusCircle className="w-5 h-5" /> New Chat
         </Button>
         <div className="flex-1 min-h-0">
           <SessionsList />
         </div>
       </SidebarContent>
-      <SidebarFooter className="p-2 border-t border-glass-border-bold">
+      <SidebarFooter className="p-2 border-t border-glass-border-soft">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-muted-foreground">MCP Servers</span>
           <TooltipProvider delayDuration={100}>
             <div className="flex items-center gap-2">
               <Tooltip>
                 <TooltipTrigger>
-                  <Server className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-pulse" />
+                  <Server className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-glow-pulse" />
                 </TooltipTrigger>
                 <TooltipContent side="top">Cloudflare Tools: Connected</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger>
-                  <Wifi className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-pulse [animation-delay:0.5s]" />
+                  <Wifi className="w-4 h-4 text-green-500 dark:text-green-400 animate-porcelain-glow-pulse [animation-delay:0.5s]" />
                 </TooltipTrigger>
                 <TooltipContent side="top">Web Search: Connected</TooltipContent>
               </Tooltip>
@@ -66,12 +66,12 @@ export function AppSidebar(): JSX.Element {
         </div>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Button variant="ghost" className="w-full justify-start gap-2 neumorphic-btn" onClick={toggleFileManager}>
+            <Button variant="ghost" className="w-full justify-start gap-2 minimal-neumorphic" onClick={toggleFileManager}>
               <HardDrive className="w-4 h-4" /> Files
             </Button>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <Button variant="ghost" className="w-full justify-start gap-2 neumorphic-btn" onClick={toggleSettings}>
+            <Button variant="ghost" className="w-full justify-start gap-2 minimal-neumorphic" onClick={toggleSettings}>
               <Settings className="w-4 h-4" /> Settings
             </Button>
           </SidebarMenuItem>

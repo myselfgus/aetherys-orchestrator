@@ -3,23 +3,21 @@
 @tailwind utilities;
 @layer base {
   :root {
-    /* Light Theme: Liquid Glass Porcelain Neumorphic */
-    --background: 40 50% 98%;
-    --foreground: 224 10% 15%;
-    --background-shadow-light: 40 50% 100%;
-    --background-shadow-dark: 40 10% 85%;
-    --card: 40 50% 98%;
-    --card-foreground: 224 10% 15%;
-    --popover: 40 50% 98%;
-    --popover-foreground: 224 10% 15%;
+    /* Light Theme: Refined Glass Porcelain */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
     --primary: 222 47% 11%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222 47% 11%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215 20% 65.1%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222 47% 11%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 204 50% 70%;
+    --accent-foreground: 0 0% 12%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 32% 91.4%;
@@ -31,16 +29,14 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 0 0% 100% / 0.1;
-    --sidebar-foreground: 224 10% 15%;
-    --sidebar-border: 0 0% 100% / 0.2;
+    --sidebar-background: 0 0% 100% / 0.04;
+    --sidebar-foreground: 0 0% 12%;
+    --sidebar-border: 0 0% 100% / 0.1;
   }
   .dark {
     /* Dark Theme: Cyberpunk Subtle */
     --background: 240 6% 10%;
     --foreground: 0 0% 98%;
-    --background-shadow-light: 240 6% 15%;
-    --background-shadow-dark: 240 6% 5%;
     --card: 240 6% 10%;
     --card-foreground: 0 0% 98%;
     --popover: 240 6% 10%;
@@ -51,7 +47,7 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --accent: 204 50% 70%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -76,38 +72,38 @@
     -moz-osx-font-smoothing: grayscale;
   }
   body {
-    @apply bg-background text-foreground font-medium;
+    @apply bg-background text-foreground font-semibold;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     text-rendering: optimizeLegibility;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 }
 @layer components {
-  .glass-neumorphic {
-    @apply bg-white/5 backdrop-blur-2xl border border-glass-border-bold shadow-liquid-reflection transition-all duration-500;
+  .refined-glass {
+    @apply bg-white/5 backdrop-blur-3xl border border-glass-border-soft shadow-liquid-glow transition-all duration-500;
   }
-  .dark .glass-neumorphic {
+  .dark .refined-glass {
     @apply bg-zinc-900/30 border-white/10 shadow-none;
   }
-  .porcelain-panel {
-    @apply bg-gradient-to-br from-background to-white/10 shadow-neumorphic-strong-out rounded-xl transition-all duration-500;
+  .porcelain-glass-panel {
+    @apply bg-gradient-to-br from-white/5 to-white/10 shadow-inset-glow rounded-2xl transition-all duration-500;
   }
-  .dark .porcelain-panel {
+  .dark .porcelain-glass-panel {
     @apply bg-zinc-800/50 border border-white/10 shadow-none;
   }
-  .neumorphic-btn {
-    @apply shadow-neumorphic-strong-out hover:shadow-neumorphic-in active:scale-95 transition-all duration-200;
+  .minimal-neumorphic {
+    @apply shadow-ultra-neumorphic-out hover:shadow-ultra-neumorphic-in active:scale-95 transition-all duration-200;
   }
-  .dark .neumorphic-btn {
+  .dark .minimal-neumorphic {
     @apply shadow-none hover:bg-zinc-800;
   }
-  .silky-input {
-    @apply shadow-neumorphic-strong-in bg-white/5 backdrop-blur-2xl transition-all duration-500;
+  .glass-bg {
+    @apply bg-white/5 backdrop-blur-2xl transition-all duration-500;
   }
-  .dark .silky-input {
+  .dark .glass-bg {
     @apply bg-zinc-800/50 border border-white/10 shadow-none;
   }
-  .inner-glow {
+  .inset-glow {
     box-shadow: inset 0 0 10px rgba(255,255,255,0.2);
   }
 }
