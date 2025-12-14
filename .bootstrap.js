@@ -83,7 +83,8 @@ function runSetupCommands() {
     "bun add remark-gfm@^4.0.0",
     "bun add rehype-raw@^7.0.0",
     "bun add react-textarea-autosize@^8.5.3",
-    "bun install react-dropzone"
+    "bun install react-dropzone",
+    "bun add react-textarea-autosize rehype-raw"
 ];
     
     if (commands.length === 0) {
